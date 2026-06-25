@@ -17,3 +17,11 @@
   sandbox) and loading the extension in a live browser.
 - **Stop point / next:** M1 — verify the full Docs-to-Speech flow end-to-end on the
   maintainer's machine and fix any wiring gaps.
+
+
+### 2026-06-25 - Added .agents brain + themed launcher
+- Installed the `.agents/` brain (STATE, NEXT, ROADMAP, PLAYBOOK, DECISIONS,
+  SESSION_LOG, knowledge graph).
+- Added the `launcher/` subsystem and wired run.bat / run.sh to it via preflight.py.
+- Verified: all Python compiles, the graph renders, the preflight runs.
+- Still open: M1 - verify TTS end-to-end (needs a real engine + a logged-in Google Doc).

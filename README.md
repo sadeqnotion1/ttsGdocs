@@ -18,8 +18,10 @@ repo-root/
 |  |- popup.html/.css/.js
 |  `- icons/
 |- .agents/            # AI project brain: orientation, roadmap, decisions, knowledge graph
-|- run.bat             # Windows launcher (thin wrapper)
-|- run.sh              # macOS/Linux launcher (thin wrapper)
+|- launcher/           # optional themed terminal UI (banner + diagnostics, zero deps)
+|- init_agents.py      # installer: sync .agents/ + launcher/ into another repo
+|- run.bat             # Windows launcher: themed preflight, then starts the backend
+|- run.sh              # macOS/Linux launcher: themed preflight, then starts the backend
 |- README.md
 `- .gitignore
 ```
@@ -58,6 +60,12 @@ run.bat
 ```
 
 You should see `TTS backend on http://127.0.0.1:5000`. Open that URL to confirm.
+
+`run.sh` / `run.bat` first run a themed preflight (`launcher/preflight.py`) that
+checks your Python version, which TTS engines are installed, and whether the port
+is free, then launch the backend. The launcher UI (`launcher/ui_theme.py`) has no
+required dependencies; install `pyfiglet` (`pip install -r launcher/requirements-optional.txt`)
+only if you want the large ASCII-art banner.
 
 ## 2. Load the extension
 

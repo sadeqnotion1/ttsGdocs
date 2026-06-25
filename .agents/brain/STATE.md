@@ -27,3 +27,6 @@
 - `pyttsx3` quality/voices depend on the OS speech engine (Linux also needs espeak/espeak-ng).
 - Very large docs are sent as a single request — chunking is M2.
 - Google Docs export endpoint relies on the user's logged-in session cookies.
+
+
+> Last touched 2026-06-25: added the `.agents/` brain + `launcher/` subsystem. M1 (verify TTS end-to-end) is still the next task.

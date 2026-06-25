@@ -22,3 +22,12 @@
 ## D4 — 2026-06-25 — Backend on the Python standard library
 **Decision:** Implement the server with `http.server` (no Flask/FastAPI).
 **Why:** Zero web-framework dependencies; the only real deps are the TTS engines themselves. Keeps the starter trivially runnable.
+
+
+## D5 - Adopt the CreateProject themed launcher (2026-06-25)
+Added `launcher/` (ui_theme.py + demo.py + integration_example.py +
+requirements-optional.txt) plus a project-specific `launcher/preflight.py`, and
+`init_agents.py` at the repo root. `run.bat` / `run.sh` now run the themed
+preflight (banner + Python/engine/port checks), then start `backend/server.py`.
+ui_theme has zero required dependencies and degrades to plain text.
+Rationale: parity with the CreateProject template; a nicer, self-diagnosing start.

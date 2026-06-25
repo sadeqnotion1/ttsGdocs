@@ -1,0 +1,7 @@
+# ui_theme.py has ZERO required dependencies.
+#
+# Install this ONLY if you want the big ASCII-art title (the large block
+# letters in the screenshot). Without it, the banner falls back to a clean
+# boxed title — everything else (gradients, icons, panels) works regardless.
+
+pyfiglet
