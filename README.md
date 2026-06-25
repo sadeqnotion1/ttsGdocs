@@ -17,6 +17,7 @@ repo-root/
 |  |- content.js       # reads doc id / selection from the page
 |  |- popup.html/.css/.js
 |  `- icons/
+|- .agents/            # AI project brain: orientation, roadmap, decisions, knowledge graph
 |- run.bat             # Windows launcher (thin wrapper)
 |- run.sh              # macOS/Linux launcher (thin wrapper)
 |- README.md
@@ -80,6 +81,24 @@ You should see `TTS backend on http://127.0.0.1:5000`. Open that URL to confirm.
 
 Edit `backend/config.py` to change the host/port, engine priority, default
 speed (`DEFAULT_RATE`) or language (`DEFAULT_LANG`).
+
+## AI project brain (`.agents/`)
+
+This repo ships an `.agents/` brain so any AI session (or a new chat/model) can
+pick up the project with zero context loss:
+
+- `.agents/AGENTS.md` — read first: orientation + boot sequence.
+- `.agents/brain/` — `STATE.md`, `NEXT.md`, `ROADMAP.md`, `PLAYBOOK.md`,
+  `DECISIONS.md`, `SESSION_LOG.md` (where we are, what is next, and why).
+- `.agents/graph/` — a queryable knowledge graph of the code
+  (`graph.json` + `render_graph.py` -> offline `graph.html`).
+- `.agents/prompts/` — paste `start.md` to begin a session, `wrap-up.md` to close one.
+
+Regenerate the visual graph after structural changes:
+
+```bash
+python .agents/graph/render_graph.py
+```
 
 ## Notes & limits
 

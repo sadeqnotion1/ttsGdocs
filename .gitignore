@@ -16,7 +16,3 @@ backend/output/*
 # secrets / local state
 *.env
 .env
-
-# agents fixes folder
-.agents/fixes/
-
