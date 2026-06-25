@@ -32,3 +32,21 @@
 - New file-name field in the popup; default derived from the doc title.
 - Audio handed to the download as a data URL so it survives popup close.
 - Verified: popup.js / content.js pass `node --check`; manifest valid JSON.
+
+
+### 2026-06-25 - Clearer doc-read errors
+- "Could not read the document text" now reports the real cause: empty doc,
+  not signed in / not shared, HTTP error, or network/permission.
+- Detects Google's HTML sign-in page (status 200) so we never "speak" HTML.
+- Added `https://*.googleusercontent.com/*` host permission for export redirects.
+- Reminder: Google has no pre-made audio; we synthesize from the doc text.
+
+
+### 2026-06-25 - Tab-capture recording mode
+- Clarified: Google Docs has no downloadable audio; its read-aloud is a live
+  voice with no file/API. Our gTTS/pyttsx3 voices are NOT the studio voices.
+- Added recording mode (background SW + offscreen + chrome.tabCapture) to
+  capture the read-aloud audio to a .webm and Save As.
+- New files: frontend/background.js, offscreen.html, offscreen.js; manifest
+  gains tabCapture + offscreen + background SW; popup gains a record section.
+- Verified: all JS passes node --check; manifest + graph are valid JSON.

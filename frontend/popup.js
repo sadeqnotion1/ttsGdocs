@@ -81,17 +81,35 @@ function getDocInfo(tabId) {
 async function fetchDocText(docId, fallbackSelection) {
   const url =
     "https://docs.google.com/document/d/" + docId + "/export?format=txt";
+  let reason = "";
   try {
     const res = await fetch(url, { credentials: "include" });
     if (res.ok) {
       const text = await res.text();
-      if (text && text.trim()) return text;
+      const trimmed = (text || "").trim();
+      // When the session can't access the doc, Google returns an HTML sign-in /
+      // error page (status 200) instead of plain text. Detect it so we don't
+      // "speak" HTML and so we can explain what's wrong.
+      const looksHtml = /^\s*<(?:!doctype|html)/i.test(text);
+      if (trimmed && !looksHtml) return text;
+      reason = looksHtml
+        ? "sign in to this Google account in this browser (or the doc isn't shared with you)"
+        : "the document looks empty - is there any text in it?";
+    } else if (res.status === 401 || res.status === 403) {
+      reason = "access denied - sign in to Google or check the doc is shared with you";
+    } else {
+      reason = "the export request failed (HTTP " + res.status + ")";
     }
   } catch (e) {
-    /* fall through to the selection fallback */
+    reason = "couldn't reach the text export (network or permission issue)";
   }
+  // Fall back to whatever the user has selected on the page.
   if (fallbackSelection && fallbackSelection.trim()) return fallbackSelection;
-  throw new Error("Could not read the document text (try selecting text first).");
+  throw new Error(
+    "Couldn't read the document text" +
+      (reason ? " - " + reason : "") +
+      ". Tip: select some text in the doc and try again."
+  );
 }
 
 async function synthesize(text) {
@@ -167,12 +185,110 @@ async function run() {
   }
 }
 
+// --- Recording Google's built-in read-aloud (tab audio capture) ------------
+
+function recStatus(msg, kind = "info") {
+  const el = $("#recStatus");
+  el.hidden = false;
+  el.textContent = msg;
+  el.dataset.kind = kind;
+}
+
+function setRecUi(active) {
+  $("#recStart").disabled = active;
+  $("#recStop").disabled = !active;
+}
+
+async function startRecording() {
+  const tab = await getActiveTab();
+  if (!tab) {
+    recStatus("No active tab to record.", "error");
+    return;
+  }
+  // Pre-fill a sensible name from the doc title when possible.
+  try {
+    const info = await getDocInfo(tab.id);
+    if (info && info.title && !$("#recName").value) $("#recName").value = info.title;
+  } catch (e) {
+    /* not a docs tab / no content script - fine */
+  }
+  chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id }, (streamId) => {
+    if (chrome.runtime.lastError || !streamId) {
+      recStatus(
+        (chrome.runtime.lastError && chrome.runtime.lastError.message) ||
+          "Couldn't start tab capture.",
+        "error"
+      );
+      return;
+    }
+    chrome.runtime.sendMessage(
+      {
+        type: "START_CAPTURE",
+        streamId: streamId,
+        title: $("#recName").value || "google-doc-audio",
+      },
+      (resp) => {
+        if (chrome.runtime.lastError || !resp || !resp.ok) {
+          recStatus(
+            "Couldn't start recording: " +
+              ((resp && resp.error) ||
+                (chrome.runtime.lastError && chrome.runtime.lastError.message) ||
+                "unknown"),
+            "error"
+          );
+          return;
+        }
+        setRecUi(true);
+        recStatus(
+          "Recording... press Play in Google's read-aloud, then Stop when it finishes.",
+          "ok"
+        );
+      }
+    );
+  });
+}
+
+function stopRecording() {
+  setRecUi(false);
+  recStatus("Saving recording...");
+  chrome.runtime.sendMessage({
+    type: "STOP_CAPTURE",
+    filename: $("#recName").value || "google-doc-audio",
+  });
+}
+
+function refreshRecState() {
+  chrome.runtime.sendMessage({ type: "GET_STATE" }, (resp) => {
+    if (chrome.runtime.lastError) return;
+    if (resp && resp.recording) {
+      setRecUi(true);
+      recStatus("Recording in progress... click Stop & save when done.", "ok");
+    } else {
+      setRecUi(false);
+    }
+  });
+}
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (!msg || !msg.type) return;
+  if (msg.type === "CAPTURE_SAVED") {
+    setRecUi(false);
+    recStatus("Saved " + (msg.name || "recording") + " - pick where in the dialog.", "ok");
+  } else if (msg.type === "CAPTURE_ERROR") {
+    setRecUi(false);
+    recStatus("Recording failed: " + (msg.error || "unknown"), "error");
+  }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   $("#rate").addEventListener("input", () => {
     $("#rateVal").textContent = $("#rate").value;
   });
   $("#go").addEventListener("click", run);
   $("#download").addEventListener("click", saveAudio);
+  $("#recStart").addEventListener("click", startRecording);
+  $("#recStop").addEventListener("click", stopRecording);
+  refreshRecState();
 
   // Quick backend health hint on open.
   fetch(BACKEND + "/health")

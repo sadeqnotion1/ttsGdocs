@@ -42,3 +42,14 @@ user chooses the folder and confirms the name. The audio is passed as a data URL
 Rationale: real download control (location + name) was the user's explicit ask;
 data URL avoids the MV3 popup-closes-and-revokes-blob failure without needing a
 background service worker yet.
+
+
+## D7 - Add tab-capture recording of Google's read-aloud (2026-06-25)
+Users wanted the *actual* Google Docs read-aloud voices (Narrator etc.), which
+Google does not expose as a file. Added a second, fully client-side mode that
+records the tab audio: `background.js` (service worker) + `offscreen.html` /
+`offscreen.js` using `chrome.tabCapture.getMediaStreamId` -> getUserMedia ->
+MediaRecorder, saved via `chrome.downloads` Save As. New permissions:
+`tabCapture`, `offscreen`. Output is webm/opus; real-time only. The gTTS/pyttsx3
+text path stays as-is. Rationale: only way to obtain those exact voices; keeps
+the synth path for offline/automated use.

@@ -30,3 +30,6 @@
 
 
 > Last touched 2026-06-25: added the `.agents/` brain + `launcher/` subsystem. M1 (verify TTS end-to-end) is still the next task.
+
+
+> Last touched 2026-06-25: added a tab-capture recording mode (records Google's own read-aloud voices to .webm). Text path (gTTS/pyttsx3) unchanged. Still unverified end-to-end in a real browser.

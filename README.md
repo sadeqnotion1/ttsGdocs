@@ -113,3 +113,28 @@ python .agents/graph/render_graph.py
 - The server binds to `127.0.0.1` only (local machine), not the network.
 - Very large documents are sent as one request; chunking is a natural next step.
 - `pyttsx3` quality/voices depend on your OS speech engine; `gTTS` needs internet.
+
+
+## Capture Google's own read-aloud voices (no Python needed)
+
+Google Docs' built-in **read-aloud** (Tools -> the voice panel: Educator,
+Narrator, Teacher, Persuader) uses Google's premium voices, but Google does not
+let you download that audio. This extension can **record it** instead:
+
+1. In the Google Doc, open Google's read-aloud panel and pick a voice.
+2. Click the extension icon -> **Start recording**.
+3. Press **Play** in Google's panel and let it read the document.
+4. Click the extension icon again -> **Stop & save**, then choose where to save.
+
+How it works: a background service worker uses `chrome.tabCapture` to grab the
+tab's audio, an offscreen document records it with `MediaRecorder`, and the
+result is saved via a Save As dialog. This path is fully client-side - the
+Python backend is only needed for the text-to-speech (gTTS / pyttsx3) mode.
+
+**Limits & notes**
+- Recording is **real time**: a 5-minute reading takes 5 minutes to record.
+- Output is **`.webm`** (Opus audio), playable in browsers and VLC. Converting
+  to MP3 needs a separate tool and is out of scope here.
+- It records whatever that tab plays, so avoid other sounds in the tab meanwhile.
+- Capturing/redistributing Google's audio may fall under Google's terms; use it
+  for your own documents.

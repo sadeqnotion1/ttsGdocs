@@ -6,44 +6,281 @@
     "note": "Repo knowledge graph. Query it, never dump it whole. See README.md for schema + jq recipes."
   },
   "nodes": [
-    { "id": "run", "label": "run.sh / run.bat", "group": "backend", "kind": "file", "summary": "Thin launchers that exec backend/server.py." },
-    { "id": "backend/server.py", "label": "server.py", "group": "backend", "kind": "file", "summary": "Stdlib HTTP server: /health, /, POST /tts, CORS." },
-    { "id": "backend/server.py#Handler", "label": "Handler", "group": "backend", "kind": "function", "summary": "BaseHTTPRequestHandler: do_GET/do_POST/do_OPTIONS." },
-    { "id": "backend/tts_engine.py", "label": "tts_engine.py", "group": "backend", "kind": "file", "summary": "Pluggable TTS engines; import-guarded." },
-    { "id": "backend/tts_engine.py#synthesize", "label": "synthesize()", "group": "backend", "kind": "function", "summary": "Try engines in priority order; returns (path, engine)." },
-    { "id": "backend/tts_engine.py#available_engines", "label": "available_engines()", "group": "backend", "kind": "function", "summary": "Which engines import successfully right now." },
-    { "id": "backend/config.py", "label": "config.py", "group": "backend", "kind": "file", "summary": "HOST, PORT, OUTPUT_DIR, ENGINE_PRIORITY, defaults." },
-    { "id": "backend/output", "label": "output/", "group": "data", "kind": "file", "summary": "Generated audio files (git-ignored)." },
-    { "id": "pyttsx3", "label": "pyttsx3", "group": "data", "kind": "external", "summary": "Offline TTS engine (optional dep)." },
-    { "id": "gTTS", "label": "gTTS", "group": "data", "kind": "external", "summary": "Online Google TTS engine (optional dep)." },
-    { "id": "frontend/manifest.json", "label": "manifest.json", "group": "frontend", "kind": "file", "summary": "MV3 manifest: permissions, host_permissions, popup, content script." },
-    { "id": "frontend/popup.html", "label": "popup.html", "group": "frontend", "kind": "file", "summary": "Popup UI markup." },
-    { "id": "frontend/popup.css", "label": "popup.css", "group": "frontend", "kind": "file", "summary": "Dark glassmorphism styling." },
-    { "id": "frontend/popup.js", "label": "popup.js", "group": "frontend", "kind": "file", "summary": "Reads doc export, calls /tts, plays + downloads audio." },
-    { "id": "frontend/popup.js#fetchDocText", "label": "fetchDocText()", "group": "frontend", "kind": "function", "summary": "Fetches the Google Doc plain-text export." },
-    { "id": "frontend/popup.js#synthesize", "label": "synthesize()", "group": "frontend", "kind": "function", "summary": "POSTs text to the backend /tts endpoint." },
-    { "id": "frontend/content.js", "label": "content.js", "group": "frontend", "kind": "file", "summary": "In-page script: reports doc id / selection / title." },
-    { "id": "docs.google.com/export", "label": "Docs export (txt)", "group": "data", "kind": "external", "summary": "/document/d/<id>/export?format=txt" }
+    {
+      "id": "run",
+      "label": "run.sh / run.bat",
+      "group": "backend",
+      "kind": "file",
+      "summary": "Thin launchers that exec backend/server.py."
+    },
+    {
+      "id": "backend/server.py",
+      "label": "server.py",
+      "group": "backend",
+      "kind": "file",
+      "summary": "Stdlib HTTP server: /health, /, POST /tts, CORS."
+    },
+    {
+      "id": "backend/server.py#Handler",
+      "label": "Handler",
+      "group": "backend",
+      "kind": "function",
+      "summary": "BaseHTTPRequestHandler: do_GET/do_POST/do_OPTIONS."
+    },
+    {
+      "id": "backend/tts_engine.py",
+      "label": "tts_engine.py",
+      "group": "backend",
+      "kind": "file",
+      "summary": "Pluggable TTS engines; import-guarded."
+    },
+    {
+      "id": "backend/tts_engine.py#synthesize",
+      "label": "synthesize()",
+      "group": "backend",
+      "kind": "function",
+      "summary": "Try engines in priority order; returns (path, engine)."
+    },
+    {
+      "id": "backend/tts_engine.py#available_engines",
+      "label": "available_engines()",
+      "group": "backend",
+      "kind": "function",
+      "summary": "Which engines import successfully right now."
+    },
+    {
+      "id": "backend/config.py",
+      "label": "config.py",
+      "group": "backend",
+      "kind": "file",
+      "summary": "HOST, PORT, OUTPUT_DIR, ENGINE_PRIORITY, defaults."
+    },
+    {
+      "id": "backend/output",
+      "label": "output/",
+      "group": "data",
+      "kind": "file",
+      "summary": "Generated audio files (git-ignored)."
+    },
+    {
+      "id": "pyttsx3",
+      "label": "pyttsx3",
+      "group": "data",
+      "kind": "external",
+      "summary": "Offline TTS engine (optional dep)."
+    },
+    {
+      "id": "gTTS",
+      "label": "gTTS",
+      "group": "data",
+      "kind": "external",
+      "summary": "Online Google TTS engine (optional dep)."
+    },
+    {
+      "id": "frontend/manifest.json",
+      "label": "manifest.json",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "MV3 manifest: permissions, host_permissions, popup, content script."
+    },
+    {
+      "id": "frontend/popup.html",
+      "label": "popup.html",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "Popup UI markup."
+    },
+    {
+      "id": "frontend/popup.css",
+      "label": "popup.css",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "Dark glassmorphism styling."
+    },
+    {
+      "id": "frontend/popup.js",
+      "label": "popup.js",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "Reads doc export, calls /tts, plays + downloads audio."
+    },
+    {
+      "id": "frontend/popup.js#fetchDocText",
+      "label": "fetchDocText()",
+      "group": "frontend",
+      "kind": "function",
+      "summary": "Fetches the Google Doc plain-text export."
+    },
+    {
+      "id": "frontend/popup.js#synthesize",
+      "label": "synthesize()",
+      "group": "frontend",
+      "kind": "function",
+      "summary": "POSTs text to the backend /tts endpoint."
+    },
+    {
+      "id": "frontend/content.js",
+      "label": "content.js",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "In-page script: reports doc id / selection / title."
+    },
+    {
+      "id": "docs.google.com/export",
+      "label": "Docs export (txt)",
+      "group": "data",
+      "kind": "external",
+      "summary": "/document/d/<id>/export?format=txt"
+    },
+    {
+      "id": "frontend/background.js",
+      "label": "background.js",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "Service worker: orchestrates tab-audio capture via an offscreen doc, then Save As download."
+    },
+    {
+      "id": "frontend/offscreen.html",
+      "label": "offscreen.html",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "Hidden page that hosts the recorder."
+    },
+    {
+      "id": "frontend/offscreen.js",
+      "label": "offscreen.js",
+      "group": "frontend",
+      "kind": "file",
+      "summary": "getUserMedia tab capture + MediaRecorder; returns audio as a data URL."
+    },
+    {
+      "id": "tab.audio",
+      "label": "Tab audio (read-aloud)",
+      "group": "data",
+      "kind": "external",
+      "summary": "Google Docs' built-in read-aloud audio played in the tab."
+    }
   ],
   "edges": [
-    { "source": "run", "target": "backend/server.py", "kind": "launches" },
-    { "source": "backend/server.py", "target": "backend/server.py#Handler", "kind": "calls" },
-    { "source": "backend/server.py", "target": "backend/config.py", "kind": "imports" },
-    { "source": "backend/server.py", "target": "backend/tts_engine.py", "kind": "imports" },
-    { "source": "backend/server.py#Handler", "target": "backend/tts_engine.py#synthesize", "kind": "calls" },
-    { "source": "backend/server.py#Handler", "target": "backend/tts_engine.py#available_engines", "kind": "calls" },
-    { "source": "backend/tts_engine.py", "target": "backend/config.py", "kind": "imports" },
-    { "source": "backend/tts_engine.py#synthesize", "target": "pyttsx3", "kind": "calls" },
-    { "source": "backend/tts_engine.py#synthesize", "target": "gTTS", "kind": "calls" },
-    { "source": "backend/tts_engine.py#synthesize", "target": "backend/output", "kind": "reads" },
-    { "source": "frontend/manifest.json", "target": "frontend/popup.html", "kind": "reads" },
-    { "source": "frontend/manifest.json", "target": "frontend/content.js", "kind": "reads" },
-    { "source": "frontend/popup.html", "target": "frontend/popup.js", "kind": "reads" },
-    { "source": "frontend/popup.html", "target": "frontend/popup.css", "kind": "reads" },
-    { "source": "frontend/popup.js", "target": "frontend/popup.js#fetchDocText", "kind": "calls" },
-    { "source": "frontend/popup.js", "target": "frontend/popup.js#synthesize", "kind": "calls" },
-    { "source": "frontend/popup.js", "target": "frontend/content.js", "kind": "messaging" },
-    { "source": "frontend/popup.js#fetchDocText", "target": "docs.google.com/export", "kind": "http" },
-    { "source": "frontend/popup.js#synthesize", "target": "backend/server.py", "kind": "http" }
+    {
+      "source": "run",
+      "target": "backend/server.py",
+      "kind": "launches"
+    },
+    {
+      "source": "backend/server.py",
+      "target": "backend/server.py#Handler",
+      "kind": "calls"
+    },
+    {
+      "source": "backend/server.py",
+      "target": "backend/config.py",
+      "kind": "imports"
+    },
+    {
+      "source": "backend/server.py",
+      "target": "backend/tts_engine.py",
+      "kind": "imports"
+    },
+    {
+      "source": "backend/server.py#Handler",
+      "target": "backend/tts_engine.py#synthesize",
+      "kind": "calls"
+    },
+    {
+      "source": "backend/server.py#Handler",
+      "target": "backend/tts_engine.py#available_engines",
+      "kind": "calls"
+    },
+    {
+      "source": "backend/tts_engine.py",
+      "target": "backend/config.py",
+      "kind": "imports"
+    },
+    {
+      "source": "backend/tts_engine.py#synthesize",
+      "target": "pyttsx3",
+      "kind": "calls"
+    },
+    {
+      "source": "backend/tts_engine.py#synthesize",
+      "target": "gTTS",
+      "kind": "calls"
+    },
+    {
+      "source": "backend/tts_engine.py#synthesize",
+      "target": "backend/output",
+      "kind": "reads"
+    },
+    {
+      "source": "frontend/manifest.json",
+      "target": "frontend/popup.html",
+      "kind": "reads"
+    },
+    {
+      "source": "frontend/manifest.json",
+      "target": "frontend/content.js",
+      "kind": "reads"
+    },
+    {
+      "source": "frontend/popup.html",
+      "target": "frontend/popup.js",
+      "kind": "reads"
+    },
+    {
+      "source": "frontend/popup.html",
+      "target": "frontend/popup.css",
+      "kind": "reads"
+    },
+    {
+      "source": "frontend/popup.js",
+      "target": "frontend/popup.js#fetchDocText",
+      "kind": "calls"
+    },
+    {
+      "source": "frontend/popup.js",
+      "target": "frontend/popup.js#synthesize",
+      "kind": "calls"
+    },
+    {
+      "source": "frontend/popup.js",
+      "target": "frontend/content.js",
+      "kind": "messaging"
+    },
+    {
+      "source": "frontend/popup.js#fetchDocText",
+      "target": "docs.google.com/export",
+      "kind": "http"
+    },
+    {
+      "source": "frontend/popup.js#synthesize",
+      "target": "backend/server.py",
+      "kind": "http"
+    },
+    {
+      "source": "frontend/manifest.json",
+      "target": "frontend/background.js",
+      "kind": "reads"
+    },
+    {
+      "source": "frontend/popup.js",
+      "target": "frontend/background.js",
+      "kind": "messaging"
+    },
+    {
+      "source": "frontend/background.js",
+      "target": "frontend/offscreen.html",
+      "kind": "spawns"
+    },
+    {
+      "source": "frontend/background.js",
+      "target": "frontend/offscreen.js",
+      "kind": "messaging"
+    },
+    {
+      "source": "frontend/offscreen.js",
+      "target": "tab.audio",
+      "kind": "captures"
+    }
   ]
 }
