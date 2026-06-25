@@ -1,4 +1,4 @@
-# createproject - Docs to Speech (TTS capture)
+# ttsGdocs - Docs to Speech (TTS capture)
 
 Capture the text of the **current Google Doc** and turn it into **downloadable speech**.
 A tiny Chrome/Edge extension reads the doc; a local Python server does the
