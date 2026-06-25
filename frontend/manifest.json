@@ -3,7 +3,7 @@
   "name": "Docs to Speech (TTS Capture)",
   "version": "0.1.0",
   "description": "Capture the text of the current Google Doc and turn it into downloadable speech via a local Python server.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "downloads"],
   "host_permissions": [
     "https://docs.google.com/*",
     "http://127.0.0.1:5000/*"

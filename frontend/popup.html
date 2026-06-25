@@ -51,7 +51,17 @@
     <p id="status" class="status" data-kind="info">Starting...</p>
 
     <audio id="player" controls hidden></audio>
-    <a id="download" class="download" hidden download>Download audio</a>
+
+    <div id="saveRow" class="save-row" hidden>
+      <label class="field">
+        <span>File name</span>
+        <input id="filename" type="text" spellcheck="false" placeholder="google-doc" />
+      </label>
+      <button id="download" class="secondary" type="button">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="M7 11l5 4 5-4" /><path d="M5 21h14" /></svg>
+        Save audio…
+      </button>
+    </div>
   </main>
   <script src="popup.js"></script>
 </body>

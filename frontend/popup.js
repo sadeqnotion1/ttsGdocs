@@ -4,6 +4,58 @@
 const $ = (sel) => document.querySelector(sel);
 const BACKEND = "http://127.0.0.1:5000";
 
+// Audio captured from the backend, kept for the Save step.
+let lastObjUrl = null; // object URL for the <audio> element
+let lastDataUrl = null; // self-contained data URL for chrome.downloads (survives popup close)
+let lastExt = "wav";
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+// Controlled download: opens a "Save As" dialog so the user picks the folder
+// and confirms the (editable) file name. Uses a data URL so it still works
+// even if the popup loses focus and closes.
+function saveAudio() {
+  if (!lastDataUrl) return;
+  const raw = ($("#filename").value || "google-doc").trim();
+  const base =
+    raw.replace(/[^\w.-]+/g, "_").replace(/^_+|_+$/g, "") || "google-doc";
+  const name = base.toLowerCase().endsWith("." + lastExt)
+    ? base
+    : base + "." + lastExt;
+
+  setStatus("Saving " + name + "...");
+  chrome.downloads.download(
+    { url: lastDataUrl, filename: name, saveAs: true, conflictAction: "uniquify" },
+    (downloadId) => {
+      if (chrome.runtime.lastError || downloadId === undefined) {
+        setStatus(
+          (chrome.runtime.lastError && chrome.runtime.lastError.message) ||
+            "Download was cancelled.",
+          "error"
+        );
+      }
+    }
+  );
+}
+
+// Report when the save actually finishes (or fails).
+if (chrome.downloads && chrome.downloads.onChanged) {
+  chrome.downloads.onChanged.addListener((delta) => {
+    if (delta.state && delta.state.current === "complete") {
+      setStatus("Saved. Check your chosen folder.", "ok");
+    } else if (delta.error && delta.error.current) {
+      setStatus("Save failed: " + delta.error.current, "error");
+    }
+  });
+}
+
 function setStatus(msg, kind = "info") {
   const el = $("#status");
   el.textContent = msg;
@@ -87,23 +139,27 @@ async function run() {
     setStatus("Generating speech (" + text.length.toLocaleString() + " chars)...");
 
     const blob = await synthesize(text);
+    if (lastObjUrl) URL.revokeObjectURL(lastObjUrl);
     const objUrl = URL.createObjectURL(blob);
+    lastObjUrl = objUrl;
 
     const audio = $("#player");
     audio.src = objUrl;
     audio.hidden = false;
     audio.play().catch(() => {});
 
-    const ext = (blob.type || "").includes("mpeg") ? "mp3" : "wav";
-    const safe = (info.title || "google-doc")
-      .replace(/[^\w.-]+/g, "_")
-      .slice(0, 60);
-    const dl = $("#download");
-    dl.href = objUrl;
-    dl.download = safe + "." + ext;
-    dl.hidden = false;
+    // Keep the audio (as a self-contained data URL) + a default name for Save.
+    lastExt = (blob.type || "").includes("mpeg") ? "mp3" : "wav";
+    lastDataUrl = await blobToDataUrl(blob);
+    const safe =
+      (info.title || "google-doc")
+        .replace(/[^\w.-]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .slice(0, 60) || "google-doc";
+    $("#filename").value = safe;
+    $("#saveRow").hidden = false;
 
-    setStatus("Done. Press play or download below.", "ok");
+    setStatus("Done. Press play, or name the file and Save below.", "ok");
   } catch (err) {
     setStatus(err.message || String(err), "error");
   } finally {
@@ -116,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#rateVal").textContent = $("#rate").value;
   });
   $("#go").addEventListener("click", run);
+  $("#download").addEventListener("click", saveAudio);
 
   // Quick backend health hint on open.
   fetch(BACKEND + "/health")

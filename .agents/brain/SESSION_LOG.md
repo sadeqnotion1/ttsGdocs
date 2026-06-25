@@ -25,3 +25,10 @@
 - Added the `launcher/` subsystem and wired run.bat / run.sh to it via preflight.py.
 - Verified: all Python compiles, the graph renders, the preflight runs.
 - Still open: M1 - verify TTS end-to-end (needs a real engine + a logged-in Google Doc).
+
+
+### 2026-06-25 - Download control (Save As + filename)
+- Added `downloads` permission; replaced the anchor with `chrome.downloads`.
+- New file-name field in the popup; default derived from the doc title.
+- Audio handed to the download as a data URL so it survives popup close.
+- Verified: popup.js / content.js pass `node --check`; manifest valid JSON.

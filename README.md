@@ -33,7 +33,7 @@ repo-root/
    This is far more reliable than scraping the canvas-rendered page.
 2. It POSTs the text to the local server at `http://127.0.0.1:5000/tts`.
 3. The server synthesizes audio with the first available engine and returns it.
-4. The popup plays it and offers a download.
+4. The popup plays it, then lets you **name the file** and pick where to save it via a **Save As** dialog (uses the `chrome.downloads` API).
 
 No invented features: every button maps to a real endpoint, and if no TTS
 engine is installed the UI tells you instead of faking output.

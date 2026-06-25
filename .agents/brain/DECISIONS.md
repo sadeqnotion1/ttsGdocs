@@ -31,3 +31,14 @@ requirements-optional.txt) plus a project-specific `launcher/preflight.py`, and
 preflight (banner + Python/engine/port checks), then start `backend/server.py`.
 ui_theme has zero required dependencies and degrades to plain text.
 Rationale: parity with the CreateProject template; a nicer, self-diagnosing start.
+
+
+## D6 - Controlled downloads via chrome.downloads (2026-06-25)
+The popup no longer uses a plain `<a download>` link. It now adds the
+`downloads` permission, an editable file-name field, and calls
+`chrome.downloads.download({ saveAs: true, conflictAction: "uniquify" })` so the
+user chooses the folder and confirms the name. The audio is passed as a data URL
+(not a blob object-URL) so the save still completes if the popup loses focus.
+Rationale: real download control (location + name) was the user's explicit ask;
+data URL avoids the MV3 popup-closes-and-revokes-blob failure without needing a
+background service worker yet.
