@@ -1,0 +1,8 @@
+# Install at least ONE text-to-speech engine.
+#
+# Offline (no internet, cross-platform). On Linux it also needs espeak:
+#   sudo apt-get install espeak    /    sudo dnf install espeak-ng
+pyttsx3>=2.90
+#
+# Online (Google TTS, needs internet, higher quality voices):
+gTTS>=2.5.0

@@ -1,0 +1,22 @@
+# runtime / build
+logs/
+*.log
+__pycache__/
+node_modules/
+dist/
+build/
+
+# generated audio (keep the folder, ignore its contents)
+backend/output/*
+!backend/output/.gitkeep
+
+# local backups this workflow creates
+*-backup-*.zip
+
+# secrets / local state
+*.env
+.env
+
+# agents fixes folder
+.agents/fixes/
+
